@@ -19,11 +19,18 @@ class TopdevspiderSpider(scrapy.Spider):
         for job in jobs:
             title = job['title']
             full_address = job['addresses']['full_addresses'][0]
-            company_name = job['company']['display_name']
+            
+            company = job['company']
+            company_name = company['display_name']
+            company_detail_url = company['detail_url']
+            company_image_logo = company['image_logo']
+            company_industries = company['industries_str']
+            
             detail_url = job['detail_url']
             job_level = job['job_levels_str']
             skills = job['skills_str']
             job_type = job['job_types_str']
+            
             salary = job['salary']
             salary_job = ""
             is_negotible = salary['is_negotiable']
@@ -34,6 +41,9 @@ class TopdevspiderSpider(scrapy.Spider):
                 salary_job = "Thuong Luong"
             else:
                 salary_job = f"Tu {min} {currency} den {max} {currency}"
+                
+            published_date = job['published']['date']
+            refreshed_date = job['refreshed']['date']
             # job_item = JobItem()
             
             # job_item['title'] = title
@@ -49,12 +59,17 @@ class TopdevspiderSpider(scrapy.Spider):
             yield{
                 'title':title,
                   'full_address' : full_address,
-                  'company_name' : company_name,
+                  'company_name' : company_name, 
+                  'company_detail_url':company_detail_url,
+                  'company_image_logo': company_image_logo, 
+                  'company_industries': company_industries, 
                   'detail_url' : detail_url,
                   'job_level' :job_level,
                   'skills' :skills,
                   'job_type' : job_type,
-                  'salary' : salary_job
+                  'salary' : salary_job,
+                  'published': published_date,
+                  'refreshed':refreshed_date,
                   }
                   
             

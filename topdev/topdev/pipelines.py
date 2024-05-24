@@ -7,7 +7,7 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 import pymongo
-
+from datetime import datetime, date
 import mysql.connector
 
 class TopdevPipeline:
@@ -58,9 +58,22 @@ class SaveToMySQLPipeline:
             skills TEXT,
             job_type TEXT,
             salary TEXT,
+            published DATE,
+            refreshed DATE,
             PRIMARY KEY (id)
         )
         """)
+        self.cur.execute("""
+        CREATE TABLE IF NOT EXISTS companies(
+            id int NOT NULL auto_increment, 
+            company_name TEXT,
+            company_detail_url TEXT,
+            company_image_logo TEXT,
+            company_industries TEXT,
+            PRIMARY KEY (id)
+        )
+        """)
+        
     def process_item(self, item, spider):
        ## Define insert statement
         self.cur.execute("""              
@@ -72,8 +85,12 @@ class SaveToMySQLPipeline:
             job_level,
             skills,
             job_type,
-            salary
+            salary,
+            published,
+            refreshed 
         ) VALUES (
+            %s,
+            %s,
             %s,
             %s,
             %s,
@@ -90,9 +107,27 @@ class SaveToMySQLPipeline:
             item["job_level"],
             item["skills"],
             item["job_type"],
-            item["salary"]
+            item["salary"],
+            datetime.strptime(item["published"], '%d-%m-%Y').date(),
+            datetime.strptime(item["published"], '%d-%m-%Y').date()
         ))
-        
+        self.cur.execute("""              
+        INSERT INTO companies (
+            company_name ,
+            company_detail_url,
+            company_image_logo ,
+            company_industries
+        ) VALUES (
+            %s,
+            %s,
+            %s,
+            %s
+        )""", (
+            item["company_name"],
+            item["company_detail_url"],
+            item["company_image_logo"],
+            item["company_industries"],
+        ))
         self.conn.commit()    
         return item
 

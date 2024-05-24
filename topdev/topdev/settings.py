@@ -76,11 +76,11 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    "topdev.pipelines.TopdevPipeline": 300,
-#    'topdev.pipelines.MongoDBPipeline': 300,
-#    "topdev.pipelines.SaveToMySQLPipeline": 400,
-# }
+ITEM_PIPELINES = {
+   "topdev.pipelines.TopdevPipeline": 300,
+   'topdev.pipelines.MongoDBPipeline': 400,
+   "topdev.pipelines.SaveToMySQLPipeline": 500
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
